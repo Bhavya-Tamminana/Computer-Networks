@@ -1,0 +1,28 @@
+#include <stdio.h>
+#include <stdint.h>
+
+uint16_t crc_ccitt(const uint8_t *data, size_t len)
+{
+    uint16_t crc = 0xFFFF;
+
+    while (len--) {
+        crc = (crc >> 8) | (crc << 8);
+        crc ^= *data++;
+        crc ^= (crc & 0xFF) >> 4;
+        crc ^= crc << 12;
+        crc ^= (crc & 0xFF) << 5;
+    }
+
+    return crc;
+}
+
+int main(void)
+{
+    uint8_t data[]=[68692074686572650a];
+    size_t len = sizeof(data);
+    uint16_t crc = crc_ccitt(data, len);
+
+    printf("CRC-CCITT: 0x%04X\n", crc);
+
+    return 0;
+}
